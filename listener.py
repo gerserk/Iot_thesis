@@ -7,7 +7,6 @@ import paho.mqtt.client as mqtt
 ACCESS_TOKEN ='eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImEiOlswXSwiZSI6MjAwMTExMDQwMDAwMCwidCI6MSwidSI6MSwibiI6WyIqIl0sImR0IjpbIioiXX19.R1mEe2j6P8r_Mt_yjVFieIweXzVDM6CihGQgvBTk6gs'
 BROKER = 'francesco-legion-5-15ach6h'
 LATENCY= 5 # ascolta e manda ogni 5 secondi
-i = 0
 
 class Listener(object):
 
@@ -21,6 +20,7 @@ class Listener(object):
         self._client.on_connect = self._on_connect
         self._client.on_message = self._on_message
         self._client.on_disconnect = self._on_disconnect
+        self._client.on_message_listen=self.on_message_listen
         self._client.loop_start()
 
     def _on_connect(self, client, userdata, flags, rc):
@@ -50,11 +50,11 @@ class Listener(object):
     def _publish(self, topic, payload):
         payload['requestId'] = str(uuid.uuid4())
         self._client.publish(topic, json.dumps(payload))
-        print(f"{payload} published!/n/n")
-
-    def listen(self, topic, message):
-        self._client.subscribe(topic)
-        js=json.load(message)
+        print(f"{payload} published!")
+    
+    def on_message_listen(client, userdata, message):
+        print('\n\nsto ascoltando!\n\n')
+        js=json.load(message.payload)
         if js['time'] != old_time:
             old_time=js['time']
             print (js)
@@ -65,19 +65,27 @@ class Listener(object):
         time.sleep(1.0)
 
         while self._connected:
+            i=0
             dht_1={"time":time.time(),'value':i}
-            Jdht_1=json.dump(dht_1)
-            self.publish('dh/sensor_data/dht_1',dht_1)
+            Jdht_1=json.dumps(dht_1)
+            self._publish('dh/sensor_data/dht_1',dht_1)
             i=i+1
             dht_2={"time":time.time(),'value':i}
-            Jdht_1=json.dump(dht_2)
-            self.publish('dh/sensor_data/dht_2',dht_2)
+            Jdht_1=json.dumps(dht_2)
+            self._publish('dh/sensor_data/dht_2',dht_2)
+  
             
+            self._client.subscribe('dh/sensor_data/dht_1')
+            
+            self._client.message_callback_add("dh/sensor_data/dht_1", self.on_message_listen)
+
             time.sleep(LATENCY)
+
 
 if __name__ == '__main__':
     i=0
     old_time=0
     d = Listener(BROKER, ACCESS_TOKEN)
     d.run()
+
 
