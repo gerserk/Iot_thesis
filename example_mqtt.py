@@ -60,7 +60,7 @@ class MQTTDemo(object):
     def _publish(self, topic, payload):
         payload['requestId'] = str(uuid.uuid4())
         self._client.publish(topic, json.dumps(payload))
-        print(f"{payload} published!/n/n")
+        print(f"{payload} published under {topic} topic!/n/n")
 
     def run(self):
         while not self._connected:
