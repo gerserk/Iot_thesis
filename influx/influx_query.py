@@ -26,3 +26,4 @@ results = []
 for table in result:
     for record in table.records:
         results.append((record.get_field(), record.get_value()))
+print(results)
