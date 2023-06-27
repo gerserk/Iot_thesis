@@ -1,0 +1,14 @@
+TBD:
+
+
+1- nuova macchina (arriva notifica device/save) creo in automatico nuova tabella
+
+2- nuova misura in macchina che gia ho, aggiungi FIELD
+
+3- aggiungi field key in automatico se nuova (ex pressione, prima non la avevo)
+
+4- elimino device, si elimini anche qui (device/delete?)
+
+https://influxdb-client.readthedocs.io/en/stable/api.html#bucketsapi
+
+https://github.com/influxdata/influxdb-client-python/blob/master/influxdb_client/client/bucket_api.py

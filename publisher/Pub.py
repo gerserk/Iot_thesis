@@ -7,7 +7,7 @@ import paho.mqtt.client as mqtt
 
 SERVER_HOST = 'francesco-legion-5-15ach6h'
 ACCESS_TOKEN ='eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7ImEiOlswXSwiZSI6MjAxOTYwMDAwMDAwMCwidCI6MSwidSI6MSwibiI6WyIqIl0sImR0IjpbIioiXX19.k_e_eKEj6EciONMcx-AgaGnbENNla2aecaS0TO44ga4'
-DEVICE_ID = 'mqtt-demo-device-' + ACCESS_TOKEN[0:4]
+DEVICE_ID = 'machine-c'
 LATENCY = 10 #send measurements every N seconds
 
 
@@ -82,8 +82,10 @@ class MQTTDemo(object):
                 'notification': {
                     'notification': 'temperaturesensor',
                     'parameters':
-                                {
-                                    'temperature': sensor.get_temp(),
+                                {   'humidity':30,
+                                    'temperature1': sensor.get_temp(),
+                                    'temperature2': sensor.get_temp(),
+                                    "pressure":25
                                 }
                 }
             })
