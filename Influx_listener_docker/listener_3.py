@@ -2,19 +2,16 @@
 # incoming notifications. 
 # All the data is then sent to the Influx instance 
 
-import paho.mqtt.client as mqtt
 import json
-from devicehive_plugin import Handler
 from devicehive import Handler
 from devicehive_plugin import Plugin
-import influxdb_client, os, time
-from influxdb_client import InfluxDBClient, Point, WritePrecision, BucketsApi
+import influxdb_client, os
+from influxdb_client import Point
 from influxdb_client.client.write_api import SYNCHRONOUS
-from dateutil import parser
 
-script_path = os.path.abspath(__file__)
-script_dir = os.path.dirname(script_path)
-os.chdir(script_dir)
+# script_path = os.path.abspath(__file__)
+# script_dir = os.path.dirname(script_path)
+# os.chdir(script_dir)
 
 with open("config.json", "r") as f:
     config = json.load(f)

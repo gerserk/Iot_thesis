@@ -1,4 +1,3 @@
-import requests
 import uvicorn
 import json
 from fastapi import FastAPI,Request, HTTPException
@@ -14,9 +13,6 @@ app = FastAPI()
 
 with open("config.json", "r") as f:
     config = json.load(f)
-
-with open("bucket.json", "r") as f:
-    b = json.load(f)
 
 # chiavi influx
 influx_user=config["influx_credentials"]["user"]
@@ -37,7 +33,7 @@ Bclient = influxdb_client.BucketsApi(client)
 # http://localhost:5000/ping
 @app.get("/ping")
 def ping():
-    return {"message": "influx data retrieval service is available!"}
+    return {"message": "pong"}
     
 @app.get("/api") # solo per prova
 def read_item(request: Request):
@@ -65,12 +61,12 @@ def read_item(request: Request):
             check=True
     
     if check is False:
-        return('this bucket does not exist')
+        return({'message':'this bucket does not exist'})
     else:
         bucket_data=findbucket_by_name(Bclient,bucket)
         bucket_id=bucket_data['id']
         Bclient.delete_bucket(bucket_id)
-        return("bucket delteted successfully!")
+        return({'message':'bucket delteted successfully!'})
 
 # http://localhost:5000/info_all_buckets
 @app.get("/info_all_buckets")
@@ -84,22 +80,25 @@ def read_item(request: Request):
 
 # http://localhost:5000/info_bucket?bucket=machine_a
 @app.post("/info_bucket")
-def read_item(request: Request):
+async def read_item(request: Request):
 
-    parameters = dict(request.query_params)
-    bucket=parameters['bucket'] 
-    bucket_data=findbucket_by_name(Bclient,bucket)
-    if bucket_data is None:
-        return('this bucket does not exist')
-    else:
-        return bucket_data
+    #bucket = await request.json()
+    bucket = await request.body()
+    bucket = bucket.decode()
+    return {"value": bucket}
+    # bucket_data=findbucket_by_name(Bclient,bucket)
+    # if bucket_data is None:
+    #     return('this bucket does not exist')
+    # else:
+    #     return bucket_data
 
 # http://localhost:5000/data_field?bucket=machine_b&t=1&time_measure=y&field=temperature
-@app.get("/data_field")
+@app.post("/data_field")
+
 def read_item(request: Request):
 
     parameters = dict(request.query_params)
-    
+    body=request.body()
     bucket=parameters['bucket']
     t=parameters['t']
     misura_tempo=parameters['time_measure'] # s, m, h, d, y, se mette month metti 30 days

@@ -12,25 +12,13 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision, BucketsApi
 from influxdb_client.client.write_api import SYNCHRONOUS
 from dateutil import parser
 
-script_path = os.path.abspath(__file__)
-script_dir = os.path.dirname(script_path)
-os.chdir(script_dir)
+user='francescogaggini'
+password='dxzr5962'
 
-with open("config.json", "r") as f:
-    config = json.load(f)
-
-# chiavi influx
-influx_user=config["influx_credentials"]["user"]
-influx_password=config["influx_credentials"]["password"]
-org = config["org"]
-url_influx = config["url_influx"]
-
-# il bucket contiene tutti i dati. Ha una data di scadenza deidibile dopo la quale i dati vengono cancellati
+org = "aquaseek"
+url_influx = "http://francesco-legion-5-15ach6h:8086"
+bucket='machine_a' # il bucket contiene tutti i dati. Ha una data di scadenza deidibile dopo la quale i dati vengono cancellati
 # si puo decidere di non cancellare mai i dati. Si possono avere piu bucket con regole diverse
-
-# BUCKET KEYS
-measures=config["bucket_keys"]["measurement"]
-sens_name=config["bucket_keys"]["sensor_name"]
 
 class SimpleHandler(Handler):
 
@@ -58,7 +46,7 @@ class SimpleHandler(Handler):
         # print('notification:\n'+ notification.notification) = temperaturesensor("notification")
 
         device_id= notification.device_id
-        
+        # print('device id:\n'+ device_id)
         verifica=notification.parameters #= dict{'humidity': 30, 'temperature1': 25.15, 'temperature2': 25.03}
         
         if self.n==1:  # if the action is to insert a notification
@@ -67,38 +55,35 @@ class SimpleHandler(Handler):
                 # print("measurement:")
                 # print(measurment)
                 # print("values:")
-                value=parameter[measurment] # nuova misura si registra in automatico
+                value=parameter[measurment]
                 # print(value)
 
-                client = influxdb_client.InfluxDBClient(url=url_influx, username=influx_user, password=influx_password,org=org) 
+                client = influxdb_client.InfluxDBClient(url=url_influx, username=user, password=password,org=org) 
                 write_api = client.write_api(write_options=SYNCHRONOUS)
                 Bclient = influxdb_client.BucketsApi(client)
-                lista=Bclient.find_buckets() #lista buckets
+                lista=Bclient.find_buckets()
+                print("lista buckets:::::::::::::::::::::::::")
                 lista_dict=lista.to_dict()
-
-                self.bucket=f"{device_id}"
+                #print(lista)
+                self.bucket='machine_a'#+self.b # 1 2 3...
                 bb=lista_dict['buckets']
                 names = [bucket['name'] for bucket in bb]
-                print(names) #nomi dei buckets
+                print(names) #ARRIVATO A : ho i nomi dei buckets
                 old=Bclient.find_bucket_by_name(self.bucket) # current bucket
 
-                # alterantive: if names in not none (names = dict con tutti i nomi)
-                if old is None:
-                    t=config['retention_time'] 
-                    bucket=Bclient.create_bucket(None,self.bucket,org , {"everySeconds": t}, 'Bucket with one week retention')
+                # alterantive: if names in not none (names= dict con tutti i nomi)
+                if old is None: 
+                    bucket=Bclient.create_bucket(None,self.bucket,'aquaseek', {"everySeconds": 604800}, 'Bucket with one week retention')
                     # if no bucket exists create a new one
 
-                point=Point(measures).tag(sens_name,device_id).field(measurment,value)
+                point=Point('measurement').tag('sensor_name',device_id).field(measurment,value)
                 write_api.write(bucket=self.bucket, org=org, record=point)
 
-plugin=config["plugin"]
-url = plugin["url"]
-topic_name = plugin["topic_name"]
-auth_url = plugin["auth_url"]
-
-dh_credentials=config["dh_credentials"]
+url = 'ws://francesco-legion-5-15ach6h/plugin/proxy/'
+topic_name = 'plugin_topic_27e39a6e-5dac-4d36-83b3-d2785c92d7f9' 
+auth_url = 'http://francesco-legion-5-15ach6h/api/rest'
 
 plugin = Plugin(SimpleHandler)
 plugin.connect(url, topic_name, auth_url=auth_url,
-               login=dh_credentials["user"], password=dh_credentials["password"])
+               login='dhadmin', password='dhadmin_#911')
 

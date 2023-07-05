@@ -1,0 +1,7 @@
+paho-mqtt
+devicehive 
+devicehive-plugin
+influxdb-client
+websocket-client
+requests
+six
