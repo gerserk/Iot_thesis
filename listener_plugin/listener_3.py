@@ -2,15 +2,14 @@
 # incoming notifications. 
 # All the data is then sent to the Influx instance 
 
-import paho.mqtt.client as mqtt
 import json
 from devicehive_plugin import Handler
 from devicehive import Handler
 from devicehive_plugin import Plugin
-import influxdb_client, os, time
+import influxdb_client, os
 from influxdb_client import InfluxDBClient, Point, WritePrecision, BucketsApi
 from influxdb_client.client.write_api import SYNCHRONOUS
-from dateutil import parser
+
 
 script_path = os.path.abspath(__file__)
 script_dir = os.path.dirname(script_path)
@@ -99,6 +98,5 @@ auth_url = plugin["auth_url"]
 dh_credentials=config["dh_credentials"]
 
 plugin = Plugin(SimpleHandler)
-plugin.connect(url, topic_name, auth_url=auth_url,
-               login=dh_credentials["user"], password=dh_credentials["password"])
+plugin.connect(url, topic_name, auth_url=auth_url, login=dh_credentials["user"], password=dh_credentials["password"])
 

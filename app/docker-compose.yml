@@ -1,5 +1,17 @@
 version: "3"
 services:
+  influxdb:
+    image: influxdb:latest
+    restart: always
+    environment:
+      - INFLUXDB_ADMIN_ENABLED=true 
+      - INFLUXDB_DB=influx
+      - INFLUXDB_ADMIN_USER=francescogaggini
+      - INFLUXDB_ADMIN_PASSWORD=dxzr5962
+    ports:
+      - 8086:8086
+    volumes:
+      - ./myInfluxVolume:/var/lib/influxdb2
   api:
     build:
       dockerfile: Dockerfile

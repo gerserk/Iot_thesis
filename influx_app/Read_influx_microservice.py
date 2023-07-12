@@ -94,7 +94,7 @@ def read_item(request: Request):
     else:
         return bucket_data
 
-# http://localhost:5000/data_field?bucket=machine_b&t=1&time_measure=y&field=temperature
+# http://localhost:5000/data_field?bucket=machine-d&t=1&time_measure=y&field=temperature1
 @app.get("/data_field")
 def read_item(request: Request):
 

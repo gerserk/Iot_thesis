@@ -20,6 +20,10 @@ influx_password=config["influx_credentials"]["password"]
 org = config["org"]
 url_influx = config["url_influx"]
 
+# BUCKET KEYS
+measures=config["bucket_keys"]["measurement"]
+sens_name=config["bucket_keys"]["sensor_name"]
+
 # Functions
 def findbucket_by_name(client,name):
     info_bucket=client.find_bucket_by_name(name)
@@ -93,7 +97,7 @@ async def read_item(request: Request):
     #     return bucket_data
 
 # http://localhost:5000/data_field?bucket=machine_b&t=1&time_measure=y&field=temperature
-@app.post("/data_field")
+@app.post("/read_data_field")
 
 def read_item(request: Request):
 
@@ -120,6 +124,22 @@ def read_item(request: Request):
         for record in table.records:
             results.append((record.get_field(), record.get_value()))
     return(results)
+
+app.post("/write_data_field")
+
+def write_item(request: Request):
+
+    parameters = dict(request.query_params)
+    body=request.body()
+    device_id=parameters['bucket']
+    t=time.time_ns()
+    measurment=parameters['measurment']
+    value=parameters['value']
+
+    point=Point
+   
+    point=Point(measures).tag(sens_name,device_id).field(measurment,value)
+    write_api.write(bucket=device_id, org=org, record=point)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5000)

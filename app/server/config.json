@@ -4,6 +4,13 @@
         "password":"dxzr5962"
     },
     "org":"aquaseek",
-    "url_influx":"http://francesco-legion-5-15ach6h:8086"
+    "url_influx":"http://localhost:8086",
+
+    "bucket_keys":{
+        "measurement":"measurement",
+        "sensor_name":"sensor_name"
+    
+    }
+    
 
 }

@@ -1,0 +1,31 @@
+{
+    "influx_credentials":{
+        "user":"francescogaggini",
+        "password":"dxzr5962"
+    },
+    
+    "dh_credentials":{
+    "user":"dhadmin",
+    "password":"dhadmin_#911"
+    },
+
+    "org":"aquaseek",
+    "url_influx":"http://localhost:8086",
+
+    "bucket_keys":{
+        "measurement":"measurement",
+        "sensor_name":"sensor_name"
+    
+    },
+    "plugin":{
+        "topic_name":"plugin_topic_27e39a6e-5dac-4d36-83b3-d2785c92d7f9",
+        "url":"ws://francesco-legion-5-15ach6h/plugin/proxy/",
+        "auth_url":"http://francesco-legion-5-15ach6h/api/rest"
+    
+    },
+    
+    "retention_time":604800
+    
+    
+
+}

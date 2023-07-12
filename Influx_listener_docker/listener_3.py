@@ -2,16 +2,16 @@
 # incoming notifications. 
 # All the data is then sent to the Influx instance 
 
-import json
+import json,os
 from devicehive import Handler
 from devicehive_plugin import Plugin
-import influxdb_client, os
+import influxdb_client
 from influxdb_client import Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-# script_path = os.path.abspath(__file__)
-# script_dir = os.path.dirname(script_path)
-# os.chdir(script_dir)
+script_path = os.path.abspath(__file__)
+script_dir = os.path.dirname(script_path)
+os.chdir(script_dir)
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -52,7 +52,6 @@ class SimpleHandler(Handler):
         print(command.command)
 
     def handle_notification(self, notification): # will be called after notification/insert event is received
-        # print('notification:\n'+ notification.notification) = temperaturesensor("notification")
 
         device_id= notification.device_id
         
@@ -61,11 +60,8 @@ class SimpleHandler(Handler):
         if self.n==1:  # if the action is to insert a notification
             parameter=notification.parameters
             for measurment in parameter.keys(): # here i call every type of measure in the dictionary
-                # print("measurement:")
-                # print(measurment)
-                # print("values:")
+
                 value=parameter[measurment] # nuova misura si registra in automatico
-                # print(value)
 
                 client = influxdb_client.InfluxDBClient(url=url_influx, username=influx_user, password=influx_password,org=org) 
                 write_api = client.write_api(write_options=SYNCHRONOUS)
@@ -84,7 +80,16 @@ class SimpleHandler(Handler):
                     t=config['retention_time'] 
                     bucket=Bclient.create_bucket(None,self.bucket,org , {"everySeconds": t}, 'Bucket with one week retention')
                     # if no bucket exists create a new one
-
+                print("measures")
+                print(measures)
+                print("sens_name")
+                print(sens_name)
+                print("device_id")
+                print(device_id)
+                print("measurment")
+                print(measurment)
+                print("value")
+                print(value)
                 point=Point(measures).tag(sens_name,device_id).field(measurment,value)
                 write_api.write(bucket=self.bucket, org=org, record=point)
 

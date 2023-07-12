@@ -3,7 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import OtherPage from './OtherPage';
 import MainComponent from './MainComponent';
-// https://www.youtube.com/watch?v=-pTel5FojAQ 
+
 function App() {
   return ( // router conneccts url with method that handles it
     <Router> 
